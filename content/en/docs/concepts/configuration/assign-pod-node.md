@@ -12,7 +12,7 @@ weight: 30
 {{% capture overview %}}
 
 You can constrain a [pod](/docs/concepts/workloads/pods/pod/) to only be able to run on particular [nodes](/docs/concepts/architecture/nodes/) or to prefer to
-run on particular nodes. There are several ways to do this, and they all use
+run on particular nodes. There are several ways to do this, and the recommended approaches all use
 [label selectors](/docs/concepts/overview/working-with-objects/labels/) to make the selection.
 Generally such constraints are unnecessary, as the scheduler will automatically do a reasonable placement
 (e.g. spread your pods across nodes, not place the pod on a node with insufficient free resources, etc.)
@@ -27,9 +27,17 @@ repo here](https://github.com/kubernetes/website/tree/{{< param "docsbranch" >}}
 
 {{% capture body %}}
 
+## nodeName
+
+`nodeName` is the simplest node selection constraint.
+`nodeName` is a field of PodSpec.  If it is non-empty, the scheduler simply schedules this pod onto that node,
+assuming that it fits resource requirements.  Since resource requirements are ignored, this approach for node
+selection is _not_ recommended.  If the named node does not have the resources to accomodate the pod, the pod
+will error and its status will indicate the reason for failure, e.g., `OutOfmemory` or `OutOfcpu`.
+
 ## nodeSelector
 
-`nodeSelector` is the simplest form of constraint.
+`nodeSelector` is the simplest form of recommended constraint.
 `nodeSelector` is a field of PodSpec. It specifies a map of key-value pairs. For the pod to be eligible
 to run on a node, the node must have each of the indicated key-value pairs as labels (it can have
 additional labels as well). The most common usage is one key-value pair.
